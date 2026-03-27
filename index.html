@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Advanced Calculator</title>
+
+<style>
+body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    font-family: Arial;
+}
+
+.container {
+    display: flex;
+    gap: 20px;
+}
+
+.calculator {
+    backdrop-filter: blur(10px);
+    background: rgba(255,255,255,0.1);
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+#display {
+    width: 100%;
+    height: 60px;
+    font-size: 22px;
+    text-align: right;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    border: none;
+    padding: 10px;
+}
+
+.buttons {
+    display: grid;
+    grid-template-columns: repeat(5, 60px);
+    gap: 10px;
+}
+
+button {
+    height: 55px;
+    border: none;
+    border-radius: 10px;
+    background: #333;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    background: #555;
+}
+
+.equal {
+    background: green;
+}
+
+.clear {
+    background: red;
+}
+
+.history {
+    width: 200px;
+    height: 300px;
+    overflow-y: auto;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 10px;
+    color: white;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="calculator">
+    <input type="text" id="display" readonly>
+
+    <div class="buttons">
+        <button onclick="clearDisplay()" class="clear">C</button>
+        <button onclick="append('(')">(</button>
+        <button onclick="append(')')">)</button>
+        <button onclick="append('/')">/</button>
+        <button onclick="append('*')">*</button>
+
+        <button onclick="append('7')">7</button>
+        <button onclick="append('8')">8</button>
+        <button onclick="append('9')">9</button>
+        <button onclick="append('-')">-</button>
+        <button onclick="append('+')">+</button>
+
+        <button onclick="append('4')">4</button>
+        <button onclick="append('5')">5</button>
+        <button onclick="append('6')">6</button>
+        <button onclick="calculate()" class="equal">=</button>
+        <button onclick="append('%')">%</button>
+
+        <button onclick="append('1')">1</button>
+        <button onclick="append('2')">2</button>
+        <button onclick="append('3')">3</button>
+        <button onclick="append('0')">0</button>
+        <button onclick="append('.')">.</button>
+
+        <button onclick="append('π')">π</button>
+        <button onclick="append('∞')">∞</button>
+        <button onclick="calculateFunc('sin')">sin</button>
+        <button onclick="calculateFunc('cos')">cos</button>
+        <button onclick="calculateFunc('log')">log</button>
+        <button onclick="calculateFunc('sqrt')">√</button>
+    </div>
+</div>
+
+<div class="history" id="history">
+    <h3>History</h3>
+</div>
+
+</div>
+
+<script>
+let display = document.getElementById("display");
+let historyBox = document.getElementById("history");
+
+function append(value) {
+    if (value === "π") {
+        display.value += Math.PI;
+    } else if (value === "∞") {
+        display.value += "Infinity";
+    } else {
+        display.value += value;
+    }
+}
+
+function clearDisplay() {
+    display.value = "";
+}
+
+function calculate() {
+    try {
+        let result = eval(display.value);
+
+        if (result === Infinity) result = "∞";
+
+        addHistory(display.value + " = " + result);
+        display.value = result;
+
+    } catch {
+        display.value = "Error";
+    }
+}
+
+function calculateFunc(func) {
+    try {
+        let val = parseFloat(display.value);
+
+        if (func === "sin") val = Math.sin(val);
+        if (func === "cos") val = Math.cos(val);
+        if (func === "log") val = Math.log10(val);
+        if (func === "sqrt") val = Math.sqrt(val);
+
+        addHistory(func + "(" + display.value + ") = " + val);
+        display.value = val;
+
+    } catch {
+        display.value = "Error";
+    }
+}
+
+function addHistory(entry) {
+    let div = document.createElement("div");
+    div.textContent = entry;
+    historyBox.appendChild(div);
+}
+
+
+// 🔥 KEYBOARD SUPPORT
+document.addEventListener("keydown", function(e) {
+    if (!isNaN(e.key) || "+-*/.%".includes(e.key)) {
+        append(e.key);
+    } else if (e.key === "Enter") {
+        calculate();
+    } else if (e.key === "Backspace") {
+        display.value = display.value.slice(0, -1);
+    }
+});
+</script>
+
+</body>
+</html>
